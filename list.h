@@ -12,7 +12,22 @@ public:
 	list() : head_(NULL), tail_(NULL)
 	{	
 	}
-	list(
+	explicit list(unsigned int size)
+	{
+		tail_ = head_ = new Node;
+		for(int i = 1 ; i < size ; ++i)
+		{
+				tail_ = (tail_->next_ = new Node(tail_, Type()));
+		}
+	}
+	explicit list(unsigned int size, const Type &val)
+	{
+		tail_ = head_ = new Node(NULL, val);
+		for(int i = 1 ; i < size ; ++i)
+		{
+				tail_ = (tail_->next_ = new Node(tail_, val));
+		}
+	}
 	void push_back(const Type &obj)
 	{
 		if(tail_ == NULL)
@@ -24,6 +39,20 @@ public:
 		{
 			tail_ = (tail_->next_ = new Node(tail_, obj));
 		}
+	}
+	void pop_back()
+	{
+		Node *temp = tail_;
+		tail_ = tail_->previous_;
+		delete temp;
+		if(tail_ == NULL) //if empty
+		{
+			head_ = NULL; 
+		}
+	}
+	Type & back() const
+	{
+		return tail_->obj_;
 	}
 	void push_front(const Type &obj)
 	{
@@ -37,7 +66,35 @@ public:
 			head_ = (head_->previous_ = new Node(obj, head_));
 		}
 	}
-	
+	void pop_front()
+	{
+		Node *temp = head_;
+		head_ = head_->next_;
+		delete temp;
+		if(head_ == NULL) //if empty
+		{
+			tail_ = NULL;
+		}
+	}
+	Type & front() const
+	{
+		return head_->obj_;
+	}
+	bool empty() const
+	{
+		return head_ == NULL;
+	}
+	unsigned int size() const
+	{
+		Node* temp = head_;
+		unsigned int result = (head_ == NULL)? 0 : 1;
+		while(temp != tail_)
+		{
+			++result;
+			temp = temp->next_;
+		}
+		return result;
+	}
 	class iterator
 	{
 		friend list;
@@ -96,20 +153,26 @@ public:
 	}
 	void clear()
 	{
-		Node* it = head_;
-		while(it != tail_)
+		while(head_ != tail_)
 		{
-			delete it;
+			Node *temp = head_;
+			head_ = head_->next_;
+			delete temp;
 		}
+		if(head_ != NULL)
+			delete head_;
 		head_ = tail_ = NULL;
 	}
 	~list()
 	{
-		Node* it = head_;
-		while(it != tail_)
+		while(head_ != tail_)
 		{
-			delete it;
+			Node *temp = head_;
+			head_ = head_->next_;
+			delete temp;
 		}
+		if(head_ == NULL) return;
+		delete head_;
 	}
 	
 	
