@@ -14,7 +14,7 @@ public:
 	}
 	explicit list(unsigned int size)
 	{
-		tail_ = head_ = new Node;
+		tail_ = head_ = (size)? new Node : NULL;
 		for(int i = 1 ; i < size ; ++i)
 		{
 				tail_ = (tail_->next_ = new Node(tail_, Type()));
@@ -22,11 +22,36 @@ public:
 	}
 	explicit list(unsigned int size, const Type &val)
 	{
-		tail_ = head_ = new Node(NULL, val);
+		tail_ = head_ = (size > 0)? new Node(NULL, val) : NULL;
 		for(int i = 1 ; i < size ; ++i)
 		{
 				tail_ = (tail_->next_ = new Node(tail_, val));
 		}
+	}
+	list(const list &l) : tail_(NULL), head_(NULL)
+	{
+		if(l.empty()) return;
+		tail_ = head_ = new Node(l.head_->obj_, NULL);
+		Node *curNode = l.head_->next_;
+		while(curNode != NULL)
+		{
+			tail_ = (tail_->next_ = new Node(tail_,curNode->obj_));
+			curNode = curNode->next_;
+		}
+	}
+	list & operator= (const list &l)
+	{
+		if(&l == this) return *this;
+		clear();
+		if(l.empty()) return *this;
+		tail_ = head_ = new Node(l.head_->obj_, NULL);
+		Node *curNode = l.head_->next_;
+		while(curNode != NULL)
+		{
+			tail_ = (tail_->next_ = new Node(tail_,curNode->obj_));
+			curNode = curNode->next_;
+		}
+		return *this;
 	}
 	void push_back(const Type &obj)
 	{
@@ -95,6 +120,35 @@ public:
 		}
 		return result;
 	}
+	iterator begin() const
+	{
+		return iterator(head_);
+	}
+	iterator end() const
+	{
+		return iterator(NULL);
+	}
+	void clear()
+	{
+		while(head_ != NULL)
+		{
+			Node *temp = head_;
+			head_ = head_->next_;
+			delete temp;
+		}
+		tail_ = NULL;
+	}
+	~list()
+	{
+		while(head_ != NULL)
+		{
+			Node *temp = head_;
+			head_ = head_->next_;
+			delete temp;
+		}
+	}
+	
+	
 	class iterator
 	{
 		friend list;
@@ -142,39 +196,6 @@ public:
 		}
 		Node *ptr_;
 	};
-	
-	iterator begin() const
-	{
-		return iterator(head_);
-	}
-	iterator end() const
-	{
-		return iterator(NULL);
-	}
-	void clear()
-	{
-		while(head_ != tail_)
-		{
-			Node *temp = head_;
-			head_ = head_->next_;
-			delete temp;
-		}
-		if(head_ != NULL)
-			delete head_;
-		head_ = tail_ = NULL;
-	}
-	~list()
-	{
-		while(head_ != tail_)
-		{
-			Node *temp = head_;
-			head_ = head_->next_;
-			delete temp;
-		}
-		if(head_ == NULL) return;
-		delete head_;
-	}
-	
 	
 private:
 	struct Node
