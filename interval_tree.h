@@ -14,7 +14,7 @@ class interval_tree
 	Insert insert_;
 	Query query_;
 public:
-	explicit interval_tree(unsigned int size = 1) :
+	explicit interval_tree(unsigned int size = 0) :
 		size_(calc(size)),
 		vec_(size_ * 2)
 	{

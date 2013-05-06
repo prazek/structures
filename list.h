@@ -12,7 +12,7 @@ public:
 	list() : head_(NULL), tail_(NULL)
 	{	
 	}
-	
+	list(
 	void push_back(const Type &obj)
 	{
 		if(tail_ == NULL)
@@ -93,6 +93,23 @@ public:
 	iterator end() const
 	{
 		return iterator(NULL);
+	}
+	void clear()
+	{
+		Node* it = head_;
+		while(it != tail_)
+		{
+			delete it;
+		}
+		head_ = tail_ = NULL;
+	}
+	~list()
+	{
+		Node* it = head_;
+		while(it != tail_)
+		{
+			delete it;
+		}
 	}
 	
 	
