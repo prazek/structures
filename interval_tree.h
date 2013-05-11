@@ -23,19 +23,31 @@ public:
 		size_(calc(vec.size())),
 		vec_(size_ * 2)
 	{
-		typename std::vector<Object>::const_iterator itcopy;
+		typename std::vector<Object>::const_iterator itcopy = vec.begin();
 		typename std::vector<Object>::iterator it = vec_.begin() + size_;
-		for(itcopy = vec.begin(); itcopy != vec.end() ; ++itcopy)
+		for(; itcopy != vec.end() ; ++itcopy)
 		{
 			*(it++) = *itcopy;
 		}
 		build();
 	}
-	Object operator[] (unsigned int index)
+	template <typename InputIterator>
+	interval_tree(InputIterator first, InputIterator last) :
+		size_(calc(distance(first,last))),
+		vec_(size_ * 2)
 	{
-		return vec_[index + size_];
+		typename std::vector<Object>::iterator it = vec_.begin() + size_;
+		for(; first != last ;)
+		{
+			*it++ = *first++;
+		}
+		build();
 	}
-	void insert(int index, Object val)
+	const Object & operator[] (unsigned int index)
+	{
+		return vec_.at(index + size_);
+	}
+	void insert(unsigned int index, Object val)
 	{
 		index += size_;
 		vec_[index] = insert_(vec_.at(index), val);
@@ -46,11 +58,11 @@ public:
 			index /= 2;
 		}
 	}
-	Object query(int lhs = 0) const
+	Object query(unsigned int lhs = 0) const
 	{
-		return query(lhs, size_);
+		return query(lhs, size_ -1);
 	}
-	Object query(int lhs, int rhs) const
+	Object query(unsigned int lhs, unsigned int rhs) const
 	{
 		lhs += size_;
 		rhs += size_;
@@ -69,7 +81,19 @@ public:
 		}
 		return result;
 	}
-	
+	void resize(unsigned int size)
+	{
+		unsigned int oldsize = size_;
+		size_ = calc(size);
+		std::vector<Object> newVec(size_ * 2);
+		unsigned int end = size_ + std::min(oldsize, size_);
+		for(int i = size_, j = oldsize ; i < end ; ++i)
+		{
+			newVec[i] = vec_[j++];
+		}
+		vec_ = newVec;
+		build();
+	}
 private:
 	void build()
 	{
