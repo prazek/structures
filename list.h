@@ -6,13 +6,15 @@ template <typename Type>
 class list
 {
 	class Node;
+	Node *head_, *tail_;
+	unsigned int size_;
 public:
 	class iterator;
 	
-	list() : head_(NULL), tail_(NULL)
+	list() : head_(NULL), tail_(NULL), size_(0)
 	{	
 	}
-	explicit list(unsigned int size)
+	explicit list(unsigned int size) : size_(size)
 	{
 		tail_ = head_ = (size)? new Node : NULL;
 		for(int i = 1 ; i < size ; ++i)
@@ -20,7 +22,7 @@ public:
 				tail_ = (tail_->next_ = new Node(tail_, Type()));
 		}
 	}
-	explicit list(unsigned int size, const Type &val)
+	list(unsigned int size, const Type &val) : size_(size)
 	{
 		tail_ = head_ = (size > 0)? new Node(NULL, val) : NULL;
 		for(int i = 1 ; i < size ; ++i)
@@ -28,7 +30,16 @@ public:
 				tail_ = (tail_->next_ = new Node(tail_, val));
 		}
 	}
-	list(const list &l) : tail_(NULL), head_(NULL)
+	template <typename InputIterator>
+	list(InputIterator first, InputIterator last)
+		: head_(NULL), tail_(NULL), size_(0)
+	{
+		while (first != last)
+		{
+			push_back(*first++);
+		}
+	}
+	list(const list &l) : tail_(NULL), head_(NULL), size_(l.size_)
 	{
 		if(l.empty()) return;
 		tail_ = head_ = new Node(l.head_->obj_, NULL);
@@ -43,6 +54,7 @@ public:
 	{
 		if(&l == this) return *this;
 		clear();
+		size_ = l.size_;
 		if(l.empty()) return *this;
 		tail_ = head_ = new Node(l.head_->obj_, NULL);
 		Node *curNode = l.head_->next_;
@@ -64,16 +76,19 @@ public:
 		{
 			tail_ = (tail_->next_ = new Node(tail_, obj));
 		}
+		++size_;
 	}
 	void pop_back()
 	{
 		Node *temp = tail_;
 		tail_ = tail_->previous_;
+		tail_->next_ = NULL;
 		delete temp;
 		if(tail_ == NULL) //if empty
 		{
 			head_ = NULL; 
 		}
+		--size_;
 	}
 	Type & back() const
 	{
@@ -81,7 +96,7 @@ public:
 	}
 	void push_front(const Type &obj)
 	{
-		if(head_ == NULL)
+		if (head_ == NULL)
 		{
 			head_ = new Node(obj, head_);
 			tail_ = head_;
@@ -90,15 +105,57 @@ public:
 		{
 			head_ = (head_->previous_ = new Node(obj, head_));
 		}
+		++size_;
 	}
 	void pop_front()
 	{
 		Node *temp = head_;
 		head_ = head_->next_;
+		head_->previous_ = NULL;
 		delete temp;
-		if(head_ == NULL) //if empty
+		if (head_ == NULL) //if empty
 		{
 			tail_ = NULL;
+		}
+		--size_;
+	}
+	iterator erase(iterator pos)
+	{
+		Node *erasing = pos.ptr_;
+		++pos;
+		if (erasing->previous_) //previous is not nulll
+			erasing->previous_->next_ = erasing->next_;
+		else //means pos is head
+			head_ = erasing->next_;
+		if (erasing->next_)
+			erasing->next_->previous_ = erasing->previous_;
+		else //means erasing is tail
+			tail_ = erasing->previous_;
+		delete erasing;
+		--size_;
+		return pos;
+	}
+	void erase(const iterator &lhs, const iterator &rhs)
+	{
+		Node *beg = lhs.ptr_, *end = rhs.ptr_;
+		if (end)
+		{
+			end->previous_ = beg->previous_;
+		}
+		if (beg->previous_)
+		{
+			beg->previous_->next_ = end;
+			end->previous_ = beg->previous_;
+		}
+		else
+		{
+			head_ = end;
+		}
+		while (beg != end)
+		{
+			Node *temp = beg;
+			beg = beg->next_;
+			delete temp;
 		}
 	}
 	Type & front() const
@@ -111,25 +168,19 @@ public:
 	}
 	unsigned int size() const
 	{
-		Node* temp = head_;
-		unsigned int result = (head_ == NULL)? 0 : 1;
-		while(temp != tail_)
-		{
-			++result;
-			temp = temp->next_;
-		}
-		return result;
+		return size_;
 	}
 	iterator begin() const
 	{
 		return iterator(head_);
 	}
-	iterator end() const
+	const iterator end() const
 	{
 		return iterator(NULL);
 	}
 	void clear()
 	{
+		size_ = 0;
 		while(head_ != NULL)
 		{
 			Node *temp = head_;
@@ -217,6 +268,16 @@ private:
 		Node *next_, *previous_;
 		Type obj_;
 	};
-	Node *head_, *tail_;
+	unsigned int calcSize() const
+	{
+		Node* temp = head_;
+		unsigned int result = (head_ == NULL)? 0 : 1;
+		while(temp != tail_)
+		{
+			++result;
+			temp = temp->next_;
+		}
+		return result;
+	}
 };
 #endif /* LIST_H */
