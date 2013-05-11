@@ -33,7 +33,7 @@ public:
 	}
 	template <typename InputIterator>
 	interval_tree(InputIterator first, InputIterator last) :
-		size_(calc(distance(first,last))),
+		size_(calc(std::distance(first,last))),
 		vec_(size_ * 2)
 	{
 		typename std::vector<Object>::iterator it = vec_.begin() + size_;
@@ -80,6 +80,16 @@ public:
 			rhs >>= 1;
 		}
 		return result;
+	}
+	template <class Functor>
+	int find(const Functor & functor) const
+	{
+		int ind = 1;
+		while (ind < size_)
+		{
+			functor(vec_[ind*2], vec_[ind*2+1]) ? ind*=2 : ind = ind*2 +1;
+		}
+		return ind - size_;
 	}
 	void resize(unsigned int size)
 	{
