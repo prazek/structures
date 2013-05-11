@@ -94,6 +94,14 @@ public:
 		vec_ = newVec;
 		build();
 	}
+	void clear()
+	{
+		typename std::vector<Object>::iterator it = vec_.begin();
+		for(; it != vec_.end() ; ++it)
+		{
+			*it = Object();
+		}
+	}
 private:
 	void build()
 	{
