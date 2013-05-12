@@ -58,9 +58,9 @@ public:
 			index /= 2;
 		}
 	}
-	Object query(unsigned int lhs = 0) const
+	const Object & query() const
 	{
-		return query(lhs, size_ -1);
+		return vec_[1];
 	}
 	Object query(unsigned int lhs, unsigned int rhs) const
 	{
@@ -87,7 +87,7 @@ public:
 		int ind = 1;
 		while (ind < size_)
 		{
-			functor(vec_[ind*2], vec_[ind*2+1]) ? ind*=2 : ind = ind*2 +1;
+			ind = functor(vec_[ind*2], vec_[ind*2|1]) ? ind*2 : ind*2|1;
 		}
 		return ind - size_;
 	}
