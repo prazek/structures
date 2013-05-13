@@ -5,7 +5,7 @@
 template <
 	typename Object,
 	typename Insert,
-	typename Query = Insert
+	typename Query
 >
 class interval_tree 
 {
@@ -50,7 +50,7 @@ public:
 	void insert(unsigned int index, Object val)
 	{
 		index += size_;
-		vec_[index] = insert_(vec_.at(index), val);
+		insert_(vec_.at(index), val);
 		index /= 2;
 		while (index != 1)
 		{
