@@ -1,8 +1,6 @@
 #ifndef HEAP_H
 #define HEAP_H
-#include <functional>
 #include <vector>
-#include <algorithm>
 
 template <
 	typename Object, 
