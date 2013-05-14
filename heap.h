@@ -41,14 +41,14 @@ public:
 		vec_.pop_back();
 		int ind = 1;
 		int size = vec_.size();
-		while(ind < size)
+		for(;;)
 		{
 			int low;
-			if(ind*2 <= size && compare_(vec_[ind*2],vec_[ind]))
+			if(ind*2 < size && compare_(vec_[ind*2],vec_[ind]))
 				low = ind*2;
 			else
 				low = ind;
-			if(ind*2+1 <= size && compare_(vec_[ind*2+1],vec_[low]))
+			if(ind*2+1 < size && compare_(vec_[ind*2+1],vec_[low]))
 				low = ind*2|1;
 			if(low == ind) 
 				return;
