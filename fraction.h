@@ -80,21 +80,25 @@ public:
 	const fraction & operator++()
 	{
 		num_ += denom_;
+		shorten();
 		return *this;
 	}
 	const fraction operator++(int)
 	{
 		num_ += denom_;
+		shorten();
 		return fraction(num_-denom_, denom_);
 	}
 	const fraction & operator--()
 	{
 		num_-= denom_;
+		shorten();
 		return *this;
 	}
 	const fraction operator--(int)
 	{
 		num_ -= denom_;
+		shorten();
 		return fraction(num_+denom_, denom_);
 	}
 private:
