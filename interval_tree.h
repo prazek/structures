@@ -12,7 +12,7 @@ template <
 class interval_tree 
 {
 	size_t size_;
-	std::vector<Object> vec_;
+	std::vector<Object, Alloc> vec_;
 	Insert insert_;
 	Query query_;
 public:
@@ -131,7 +131,7 @@ public:
 	size_t capacity() const
 	{
 		return size_;
-	}
+	}	
 private:
 	void build()
 	{
