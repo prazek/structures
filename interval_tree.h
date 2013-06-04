@@ -2,19 +2,21 @@
 #define INTERVAL_TREE_H
 
 #include <vector>
+#include <cstddef>
 template <
 	typename Object,
 	typename Insert,
-	typename Query
+	typename Query,
+	class Alloc = std::allocator<Object>
 >
 class interval_tree 
 {
-	unsigned int size_;
+	size_t size_;
 	std::vector<Object> vec_;
 	Insert insert_;
 	Query query_;
 public:
-	explicit interval_tree(unsigned int size = 0) :
+	explicit interval_tree(size_t size = 0) :
 		size_(calc(size)),
 		vec_(size_ * 2)
 	{
@@ -43,11 +45,11 @@ public:
 		}
 		build();
 	}
-	const Object & operator[] (unsigned int index)
+	const Object & operator[] (size_t index)
 	{
 		return vec_.at(index + size_);
 	}
-	void insert(unsigned int index, Object val)
+	void insert(size_t index, Object val)
 	{
 		index += size_;
 		insert_(vec_.at(index), val);
@@ -62,7 +64,7 @@ public:
 	{
 		return vec_[1];
 	}
-	Object query(unsigned int lhs, unsigned int rhs) const
+	Object query(size_t lhs, size_t rhs) const
 	{
 		lhs += size_;
 		rhs += size_;
@@ -91,10 +93,12 @@ public:
 		}
 		return ind - size_;
 	}
-	void resize(unsigned int size)
+	void resize(size_t size)
 	{
 		unsigned int oldsize = size_;
 		size_ = calc(size);
+		if(size_ == oldsize) 
+			return;
 		std::vector<Object> newVec(size_ * 2);
 		unsigned int end = size_ + std::min(oldsize, size_);
 		for(int i = size_, j = oldsize ; i < end ; ++i)
@@ -104,13 +108,29 @@ public:
 		vec_ = newVec;
 		build();
 	}
-	void clear()
+	/*
+	 * Uses default constructor to clear values
+	 */
+	void clear_values()
 	{
 		typename std::vector<Object>::iterator it = vec_.begin();
 		for(; it != vec_.end() ; ++it)
 		{
 			*it = Object();
 		}
+	}
+	/*
+	 * 
+	 * Equal to resize(0)
+	 */
+	void clear()
+	{
+		vec_.resize(0);
+		size_ = 0;
+	}
+	size_t capacity() const
+	{
+		return size_;
 	}
 private:
 	void build()
@@ -122,7 +142,11 @@ private:
 	}
 	int calc(unsigned int p)
 	{ 
-		// function to calculate size of tree
+		/*
+		 * function to calculate size of tree
+		 * returns first bigger or equal power of 2 than p
+		 */
+		if (p == 0) return 0;
 		int res = 1;
 		while (res <= p){
 			res <<= 1;
