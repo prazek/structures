@@ -111,13 +111,14 @@ public:
 	/*
 	 * Uses default constructor to clear values
 	 */
-	void clear_values()
+	void setValues(const Object &val)
 	{
-		typename std::vector<Object>::iterator it = vec_.begin();
+		typename std::vector<Object, Alloc>::iterator it = vec_.begin() + size_;
 		for(; it != vec_.end() ; ++it)
 		{
-			*it = Object();
+			*it = val;
 		}
+		build();
 	}
 	/*
 	 * Equal to resize(0)
@@ -127,7 +128,7 @@ public:
 		vec_.resize(0);
 		size_ = 0;
 	}
-	size_t capacity() const
+	size_t size() const
 	{
 		return size_;
 	}
@@ -149,15 +150,17 @@ public:
 	};
 	iterator begin() const
 	{
-		typename std::vector<Object, Alloc>::const_iterator it = vec_.begin();
-		std::advance(it, size_);
-		return iterator(it);
+		return iterator(vec_.begin() + size_);
 	}
 	iterator end() const
 	{
 		return iterator(vec_.end());
 	}
 private:
+	/*
+	 * Function sets valid values to the rest of the tree, based on
+	 * values in the leafs 
+	 */
 	void build()
 	{
 		for (int i = size_ - 1; i > 0 ; --i)
