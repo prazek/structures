@@ -16,21 +16,10 @@ class interval_tree
 	Insert insert_;
 	Query query_;
 public:
-	explicit interval_tree(size_t size = 0) :
+	explicit interval_tree(size_t size = 0, const Object &val = Object()) :
 		size_(calc(size)),
-		vec_(size_ * 2)
+		vec_(size_ * 2, val)
 	{
-	}
-	explicit interval_tree(const std::vector<Object> &vec) :
-		size_(calc(vec.size())),
-		vec_(size_ * 2)
-	{
-		typename std::vector<Object>::const_iterator itcopy = vec.begin();
-		typename std::vector<Object>::iterator it = vec_.begin() + size_;
-		for(; itcopy != vec.end() ; ++itcopy)
-		{
-			*(it++) = *itcopy;
-		}
 		build();
 	}
 	template <typename InputIterator>
@@ -109,7 +98,8 @@ public:
 		build();
 	}
 	/*
-	 * Uses default constructor to clear values
+	 * Function to set values of leafs
+	 * t.serValues(x) is equal to t = interval_tree(t.size(), x)
 	 */
 	void setValues(const Object &val)
 	{
