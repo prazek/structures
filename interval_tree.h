@@ -120,7 +120,6 @@ public:
 		}
 	}
 	/*
-	 * 
 	 * Equal to resize(0)
 	 */
 	void clear()
@@ -131,7 +130,33 @@ public:
 	size_t capacity() const
 	{
 		return size_;
-	}	
+	}
+	
+	class iterator : 
+			public std::vector<Object, Alloc>::const_iterator
+	{
+	public:
+		iterator()
+		{
+		}
+		friend interval_tree;
+		typedef typename std::vector<Object, Alloc>::const_iterator 	super;
+		iterator(const super & it)
+			: super(it)
+		{
+		}
+	
+	};
+	iterator begin() const
+	{
+		typename std::vector<Object, Alloc>::const_iterator it = vec_.begin();
+		std::advance(it, size_);
+		return iterator(it);
+	}
+	iterator end() const
+	{
+		return iterator(vec_.end());
+	}
 private:
 	void build()
 	{
@@ -140,12 +165,13 @@ private:
 			vec_[i] = query_(vec_[i*2], vec_[i*2 + 1]);
 		}
 	}
+	/*
+	 * Function to calculate size of tree used to make full binary tree.
+	 * Returns first bigger or equal power of 2 than p.
+	 */
 	int calc(unsigned int p)
 	{ 
-		/*
-		 * function to calculate size of tree
-		 * returns first bigger or equal power of 2 than p
-		 */
+		
 		if (p == 0) return 0;
 		int res = 1;
 		while (res <= p){
