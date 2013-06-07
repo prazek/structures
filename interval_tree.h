@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cstddef>
+#include <iterator>
 template <
 	typename Object,
 	typename Insert,
@@ -16,15 +17,18 @@ class interval_tree
 	Insert insert_;
 	Query query_;
 public:
-	explicit interval_tree(size_t size = 0, const Object &val = Object()) :
+	explicit interval_tree(size_t size, const Object &val = Object()) :
 		size_(calc(size)),
 		vec_(size_ * 2, val)
 	{
 		build();
 	}
+	
+
 	template <typename InputIterator>
-	interval_tree(InputIterator first, InputIterator last) :
-		size_(calc(std::distance(first,last))),
+	interval_tree(InputIterator first, InputIterator last, typename
+			std::enable_if<!std::is_integral<InputIterator>::value>::type* = 0) 
+		: size_(calc(std::distance(first,last))),
 		vec_(size_ * 2)
 	{
 		typename std::vector<Object>::iterator it = vec_.begin() + size_;
@@ -126,18 +130,20 @@ public:
 	class iterator : 
 			public std::vector<Object, Alloc>::const_iterator
 	{
+		typedef typename std::vector<Object, Alloc>::const_iterator 	super;
 	public:
 		iterator()
 		{
+			
 		}
 		friend interval_tree;
-		typedef typename std::vector<Object, Alloc>::const_iterator 	super;
 		iterator(const super & it)
 			: super(it)
 		{
 		}
 	
 	};
+	
 	iterator begin() const
 	{
 		return iterator(vec_.begin() + size_);
