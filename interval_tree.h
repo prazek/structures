@@ -17,14 +17,13 @@ class interval_tree
 	Insert insert_;
 	Query query_;
 public:
-	explicit interval_tree(size_t size, const Object &val = Object()) :
+	explicit interval_tree(size_t size = 0, const Object &val = Object()) :
 		size_(calc(size)),
 		vec_(size_ * 2, val)
 	{
 		build();
 	}
 	
-
 	template <typename InputIterator>
 	interval_tree(InputIterator first, InputIterator last, typename
 			std::enable_if<!std::is_integral<InputIterator>::value>::type* = 0) 
@@ -125,6 +124,12 @@ public:
 	size_t size() const
 	{
 		return size_;
+	}
+	typedef interval_tree<Object, Insert, Query, Alloc> 	container;
+	void swap(interval_tree &tree)
+	{
+		vec_.swap(tree.vec_);
+		std::swap(size_, tree.size_);
 	}
 	
 	class iterator : 
