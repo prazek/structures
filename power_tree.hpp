@@ -9,14 +9,14 @@ class power_tree
 	T *tree_;
 	size_t size_;
 public:
-	power_tree(size_t size = 0, const T &val = T())
+	explicit power_tree(size_t size = 0, const T &val = T())
 		: tree_(size ? new T[size+1] : 0),
 		size_(size)
 	{
 	}
 	
 	template <typename T2>
-	power_tree(const power_tree<T2> &p)
+	explicit power_tree(const power_tree<T2> &p)
 		: tree_(new T[p.size_]),
 		size_(p.size_)
 	{
