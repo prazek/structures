@@ -125,7 +125,6 @@ public:
 	{
 		return size_;
 	}
-	typedef interval_tree<Object, Insert, Query, Alloc> 	container;
 	void swap(interval_tree &tree)
 	{
 		vec_.swap(tree.vec_);
