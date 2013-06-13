@@ -208,6 +208,7 @@ private:
 		OPERATOR(^=)
 		OPERATOR(>>=)
 		OPERATOR(<<=)
+		#undef OPERATOR
 		operator const Object& () const
 		{
 			return ptr_->vec_.at(index_);
