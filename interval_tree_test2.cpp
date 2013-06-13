@@ -39,3 +39,21 @@ int main()
 	}
 	
 }
+/* Output
+	maximum of [0,10] interval = 15
+	maximum of [3,4] interval = 3
+	after changing value [4]
+	maximum of [0,10] interval = 20
+	maximum of [3,4] interval = 20
+	let's find out where are biggest numbers!
+	the biggest number now is 20 at 4
+	the biggest number now is 15 at 2
+	the biggest number now is 15 at 5
+	the biggest number now is 15 at 7
+	the biggest number now is 7 at 9
+	the biggest number now is 5 at 1
+	the biggest number now is 3 at 3
+	the biggest number now is 3 at 8
+	the biggest number now is 2 at 6
+	the biggest number now is 1 at 0
+	*/
