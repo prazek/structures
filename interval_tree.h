@@ -6,7 +6,6 @@
 #include <iterator>
 template <
 	typename Object,
-	typename Insert,
 	typename Query,
 	class Alloc = std::allocator<Object>
 >
@@ -14,8 +13,9 @@ class interval_tree
 {
 	size_t size_;
 	std::vector<Object, Alloc> vec_;
-	Insert insert_;
 	Query query_;
+	class interElement;
+	friend interElement;
 public:
 	explicit interval_tree(size_t size = 0, const Object &val = Object()) :
 		size_(calc(size)),
@@ -37,20 +37,11 @@ public:
 		}
 		build();
 	}
-	const Object & operator[] (size_t index)
+	interElement & operator[] (size_t index)
 	{
-		return vec_.at(index + size_);
-	}
-	void insert(size_t index, Object val)
-	{
-		index += size_;
-		insert_(vec_.at(index), val);
-		index /= 2;
-		while (index != 1)
-		{
-			vec_[index] = query_(vec_[index*2], vec_[index*2+1]);
-			index /= 2;
-		}
+		element_.index_ = index + size_;
+		element_.ptr_ = this;
+		return element_;
 	}
 	const Object & query() const
 	{
@@ -138,14 +129,12 @@ public:
 	public:
 		iterator()
 		{
-			
 		}
 		friend interval_tree;
 		iterator(const super & it)
 			: super(it)
 		{
 		}
-	
 	};
 	
 	iterator begin() const
@@ -182,6 +171,53 @@ private:
 		}
 		return res;
 	}
+	void insert(size_t index)
+	{
+		index /= 2;
+		while (index != 1)
+		{
+			vec_[index] = query_(vec_[index*2], vec_[index*2+1]);
+			index /= 2;
+		}
+	}
+	
+	class interElement
+	{
+		friend interval_tree;
+		size_t index_;
+		interval_tree<Object, Query, Alloc> *ptr_;
+		interElement(interval_tree *ref) : ptr_(ref)
+		{
+		}
+	public:
+		interElement() {}
+		#define OPERATOR(OP)\
+		void operator OP (const Object &val){\
+			ptr_->vec_.at(index_) OP val;\
+			ptr_->insert(index_);\
+		}
+		
+		OPERATOR(=)
+		OPERATOR(+=)
+		OPERATOR(-=)
+		OPERATOR(*=)
+		OPERATOR(%=)
+		OPERATOR(/=)
+		OPERATOR(|=)
+		OPERATOR(&=)
+		OPERATOR(^=)
+		OPERATOR(>>=)
+		OPERATOR(<<=)
+		operator const Object& () const
+		{
+			return ptr_->vec_.at(index_);
+		}
+	};
+	static interElement element_;
 };
+
+template <typename Object,typename Query,class Alloc>
+typename interval_tree<Object, Query, Alloc>::interElement 
+interval_tree<Object, Query, Alloc>::element_;
 
 #endif /* INTERVAL_TREE_H */
