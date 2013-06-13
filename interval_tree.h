@@ -95,7 +95,7 @@ public:
 	 * Function to set values of leafs
 	 * t.serValues(x) is equal to t = interval_tree(t.size(), x)
 	 */
-	void setValues(const Object &val)
+	void set_values(const Object &val)
 	{
 		typename std::vector<Object, Alloc>::iterator it = vec_.begin() + size_;
 		for(; it != vec_.end() ; ++it)
