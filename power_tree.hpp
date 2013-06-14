@@ -2,7 +2,7 @@
 #define POWER_TREE_HPP
 
 #include <cstddef>
-
+#include <algorithm>
 template <typename T>
 class power_tree
 {
@@ -69,7 +69,11 @@ public:
 		return size_;
 	}
 	
-	void swap(power_tree &p);
+	void swap(power_tree &p)
+	{
+		std::swap(tree_, p.tree_);
+		std::swap(size_,p.size_);
+	}
 	
 	~power_tree()
 	{
@@ -87,5 +91,15 @@ private:
 	}
 	
 };
+
+namespace std{
+	
+
+template <typename T>
+void swap(power_tree<T> &a, power_tree<T> &b)
+{
+	a.swap(b);
+}
+}
 
 #endif //POWER_TREE_HPP
