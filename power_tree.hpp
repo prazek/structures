@@ -1,6 +1,7 @@
 #ifndef POWER_TREE_HPP
 #define POWER_TREE_HPP
-
+#include <cstdio>
+#include <cstring>
 #include <cstddef>
 #include <algorithm>
 template <typename T>
@@ -9,35 +10,43 @@ class power_tree
 	T *tree_;
 	size_t size_;
 public:
-	explicit power_tree(size_t size = 0, const T &val = T())
+	explicit power_tree(size_t size = 0)
 		: tree_(size ? new T[size+1] : 0),
-		size_(size)
+		size_(size+1)
 	{
 	}
 	
-	template <typename T2>
-	explicit power_tree(const power_tree<T2> &p)
+	power_tree(const power_tree &p)
 		: tree_(new T[p.size_]),
 		size_(p.size_)
 	{
-		copyValues(p.tree_);
+		memcpy(tree_, p.tree_, size_ * sizeof(T));
 	}
 	
-	void resize(size_t size);
-	
-	template <typename T2>
-	power_tree & operator= (const power_tree<T2> &p)
+	void resize(size_t size)
 	{
-		if(*this == &p)
-			return;
-		
-		delete[] tree_;
-		size_ = p.size_;
-		tree_ = new T[size_];
-		
-		copyValues(p.tree_);
+		if(++size != size_)
+		{
+			T* temp = new T[size];
+			size_ = size;
+			memcpy(temp, tree_, size * sizeof(T));
+			delete[] tree_;
+			tree_ = temp;
+		}
+	}
+	
+	power_tree & operator= (const power_tree &p)
+	{
+		if(this != &p)
+		{
+			delete[] tree_;
+			size_ = p.size_;
+			tree_ = new T[size_];
+			memcpy(tree_, p.tree_, size_ * sizeof(T));
+		}
 		return *this;
 	}
+	
 	T query(size_t index) const
 	{
 		++index;
@@ -58,7 +67,7 @@ public:
 	void insert(size_t index, const T& val)
 	{
 		index++;
-		for(; index < size_ ; index += (index & -index))
+		for(; index < size_ ; index += (index & -index)) // using magic
 		{
 			tree_[index] += val;
 		}
@@ -66,7 +75,7 @@ public:
 	
 	size_t size() const
 	{
-		return size_;
+		return size_-1;
 	}
 	
 	void swap(power_tree &p)
@@ -80,26 +89,23 @@ public:
 		delete[] tree_;
 	}
 	
-private:
-	void copyVaules(T *ptr)
+	void print() const
 	{
-		T *iterator = &tree_, copyIterator = &ptr;
-		while(iterator)
+		for(int i = 0 ; i < size_ ; ++i)
 		{
-			*iterator++ = *copyIterator++;
+			printf("%d ",tree_[i]);
 		}
+		putchar('\n');
 	}
-	
 };
 
-namespace std{
-	
-
-template <typename T>
-void swap(power_tree<T> &a, power_tree<T> &b)
+namespace std
 {
-	a.swap(b);
-}
+	template <typename T>
+	void swap(power_tree<T> &a, power_tree<T> &b)
+	{
+		a.swap(b);
+	}
 }
 
 #endif //POWER_TREE_HPP
