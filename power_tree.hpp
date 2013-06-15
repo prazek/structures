@@ -2,7 +2,6 @@
 #define POWER_TREE_HPP
 
 #include <cstring>
-#include <cstddef>
 #include <algorithm>
 
 template <typename T>
