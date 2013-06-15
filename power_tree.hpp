@@ -1,9 +1,10 @@
 #ifndef POWER_TREE_HPP
 #define POWER_TREE_HPP
-#include <cstdio>
+
 #include <cstring>
 #include <cstddef>
 #include <algorithm>
+
 template <typename T>
 class power_tree
 {
@@ -89,14 +90,6 @@ public:
 		delete[] tree_;
 	}
 	
-	void print() const
-	{
-		for(int i = 0 ; i < size_ ; ++i)
-		{
-			printf("%d ",tree_[i]);
-		}
-		putchar('\n');
-	}
 };
 
 namespace std
