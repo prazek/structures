@@ -17,6 +17,10 @@ class interval_tree
 	class interElement;
 	friend interElement;
 public:
+	
+	typedef Object value_type;
+	typedef Alloc allocator_type;
+	
 	explicit interval_tree(size_t size = 0, const Object &val = Object()) :
 		size_(calc(size)),
 		vec_(size_ * 2, val)
