@@ -43,6 +43,10 @@ public:
 		element_.ptr_ = this;
 		return element_;
 	}
+	const Object & operator[] (size_t index) const
+	{
+		return vec_.at(index+size_);
+	}
 	const Object & query() const
 	{
 		return vec_[1];
@@ -192,9 +196,10 @@ private:
 	public:
 		interElement() {}
 		#define OPERATOR(OP)\
-		void operator OP (const Object &val){\
+		const Object & operator OP (const Object &val){\
 			ptr_->vec_.at(index_) OP val;\
 			ptr_->insert(index_);\
+			return ptr_->vec_[index_];\
 		}
 		
 		OPERATOR(=)
