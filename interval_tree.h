@@ -1,5 +1,4 @@
-#ifndef INTERVAL_TREE_H
-#define INTERVAL_TREE_H
+#pragma once
 
 #include <vector>
 #include <cstddef>
@@ -49,7 +48,7 @@ public:
 	}
 	const Object & operator[] (size_t index) const
 	{
-		return vec_.at(index+size_);
+		return vec_.at(index + size_);
 	}
 	const Object & query() const
 	{
@@ -75,7 +74,7 @@ public:
 		return result;
 	}
 	template <class Functor>
-	int find(const Functor & functor) const
+	int find(const Functor &functor) const
 	{
 		int ind = 1;
 		while (ind < size_)
@@ -86,12 +85,12 @@ public:
 	}
 	void resize(size_t size)
 	{
-		unsigned int oldsize = size_;
+		size_t oldsize = size_;
 		size_ = calc(size);
 		if(size_ == oldsize) 
 			return;
 		std::vector<Object> newVec(size_ * 2);
-		unsigned int end = size_ + std::min(oldsize, size_);
+		size_t end = size_ + std::min(oldsize, size_);
 		for(int i = size_, j = oldsize ; i < end ; ++i)
 		{
 			newVec[i] = vec_[j++];
@@ -230,4 +229,3 @@ template <typename Object,typename Query,class Alloc>
 typename interval_tree<Object, Query, Alloc>::interElement 
 interval_tree<Object, Query, Alloc>::element_;
 
-#endif /* INTERVAL_TREE_H */
