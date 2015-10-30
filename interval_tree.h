@@ -54,6 +54,14 @@ public:
 	{
 		return vec_[1];
 	}
+	Object rquery(size_t rhs) const
+	{
+		return query(0, rhs);
+	}
+	Object lquery(size_t lhs) const
+	{
+		return query(lhs, size());
+	}
 	Object query(size_t lhs, size_t rhs) const
 	{
 		lhs += size_;
@@ -62,14 +70,14 @@ public:
 		if (lhs != rhs)
 			result = query_(result, vec_.at(rhs));
 		
-		while ((lhs >> 1) != (rhs >> 1))
+		while ((lhs / 2) != (rhs / 2))
 		{
-			if (!(lhs & 1))
+			if (lhs % 2 == 0)
 				result = query_(result, vec_[lhs + 1]);
-			if (rhs & 1) 
+			if (rhs % 2 == 1)
 				result = query_(result, vec_[rhs - 1]);
-			lhs >>= 1;
-			rhs >>= 1;
+			lhs /= 2;
+			rhs /= 2;
 		}
 		return result;
 	}
@@ -169,12 +177,12 @@ private:
 	 * Returns first bigger or equal power of 2 than p.
 	 */
 	int calc(unsigned int p)
-	{ 
-		
-		if (p == 0) return 0;
+	{
+		if (p == 0)
+			return 0;
 		int res = 1;
 		while (res <= p){
-			res <<= 1;
+			res *= 2;
 		}
 		return res;
 	}
@@ -183,7 +191,7 @@ private:
 		index /= 2;
 		while (index != 1)
 		{
-			vec_[index] = query_(vec_[index*2], vec_[index*2+1]);
+			vec_[index] = query_(vec_[index * 2], vec_[index * 2 + 1]);
 			index /= 2;
 		}
 	}
