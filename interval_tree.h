@@ -27,9 +27,8 @@ public:
 		build();
 	}
 	
-	template <typename InputIterator>
-	interval_tree(InputIterator first, InputIterator last, typename
-			std::enable_if<!std::is_integral<InputIterator>::value>::type* = 0) 
+	template <typename InputIterator, typename = typename std::enable_if<!std::is_integral<InputIterator>::value>::type>
+	interval_tree(InputIterator first, InputIterator last)
 		: size_(calc(std::distance(first,last))),
 		vec_(size_ * 2)
 	{
