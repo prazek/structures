@@ -27,10 +27,11 @@ public:
 		build();
 	}
 	
-	template <typename InputIterator, typename = typename std::enable_if<!std::is_integral<InputIterator>::value>::type>
+	template <typename InputIterator, 
+              typename = typename std::enable_if<!std::is_integral<InputIterator>::value>::type>
 	interval_tree(InputIterator first, InputIterator last)
 		: size_(calc(std::distance(first,last))),
-		vec_(size_ * 2)
+		  vec_(size_ * 2)
 	{
 		typename std::vector<Object>::iterator it = vec_.begin() + size_;
 		for(; first != last ;)
