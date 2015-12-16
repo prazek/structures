@@ -1,8 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <stack>
 #include <cstddef>
 #include <iterator>
+
 template <
 	typename Object,
 	typename Query,
@@ -60,34 +62,49 @@ public:
 	}
 	Object lquery(size_t lhs) const
 	{
-		return query(lhs, size());
+		return query(lhs, size() - 1);
 	}
 	Object query(size_t lhs, size_t rhs) const
 	{
+        static std::stack<size_t, std::vector<size_t>> rhsNodes;
 		lhs += size_;
 		rhs += size_;
-		Object result = vec_.at(lhs);
+        
+        Object result = vec_.at(lhs);
 		if (lhs != rhs)
-			result = query_(result, vec_.at(rhs));
+            rhsNodes.push(rhs);
 		
-		while ((lhs / 2) != (rhs / 2))
+        // Go up untill they have common parent.
+        while ((lhs / 2) != (rhs / 2))
 		{
-			if (lhs % 2 == 0)
+			// Applying query from left path.
+            if (lhs % 2 == 0)
 				result = query_(result, vec_[lhs + 1]);
 			if (rhs % 2 == 1)
-				result = query_(result, vec_[rhs - 1]);
+				rhsNodes.push(rhs - 1);
 			lhs /= 2;
 			rhs /= 2;
 		}
+
+        // Applying queries from right path.
+        while (!rhsNodes.empty()) {
+            auto ind = rhsNodes.top();
+            rhsNodes.pop();
+            result = query_(result, vec_[ind]);
+        }
+
 		return result;
 	}
+    /*
+     * todo doc
+     */
 	template <class Functor>
 	int find(const Functor &functor) const
 	{
 		int ind = 1;
 		while (ind < size_)
 		{
-			ind = functor(vec_[ind*2], vec_[ind*2|1]) ? ind*2 : ind*2|1;
+			ind = functor(vec_[ind * 2], vec_[ind * 2 + 1]) ? ind * 2 : ind * 2 + 1;
 		}
 		return ind - size_;
 	}
@@ -194,6 +211,7 @@ private:
 			vec_[index] = query_(vec_[index * 2], vec_[index * 2 + 1]);
 			index /= 2;
 		}
+		vec_[index] = query_(vec_[index * 2], vec_[index * 2 + 1]);
 	}
 	
 	class interElement
