@@ -118,9 +118,9 @@ public:
         build();
     }
     /*
-	 * Function to set values of leafs
-	 * t.serValues(x) is equal to t = interval_tree(t.size(), x)
-	 */
+     * Function to set values of leafs
+     * t.serValues(x) is equal to t = interval_tree(t.size(), x)
+     */
     void set_values(const Object& val)
     {
         typename std::vector<Object, Alloc>::iterator it = vec_.begin() + size_;
@@ -130,8 +130,8 @@ public:
         build();
     }
     /*
-	 * Equal to resize(0)
-	 */
+     * Equal to resize(0)
+     */
     void clear()
     {
         vec_.resize(0);
@@ -172,9 +172,9 @@ public:
 
 private:
     /*
-	 * Function sets valid values to the rest of the tree, based on
-	 * values in the leafs 
-	 */
+     * Function sets valid values to the rest of the tree, based on
+     * values in the leafs 
+     */
     void build()
     {
         for (int i = size_ - 1; i > 0; --i) {
@@ -182,9 +182,9 @@ private:
         }
     }
     /*
-	 * Function to calculate size of tree used to make full binary tree.
-	 * Returns first bigger or equal power of 2 than p.
-	 */
+     * Function to calculate size of tree used to make full binary tree.
+     * Returns first bigger or equal power of 2 than p.
+     */
     int calc(unsigned int p)
     {
         if (p == 0)
